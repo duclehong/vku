@@ -12,8 +12,8 @@ module.exports = function (app, obj, binance, binanceTest) {
   async function printBalance(btcPrice) {
     const balance = await binanceTest.fetchBalance();
     const total = balance.total;
-    console.log(`Balance : BTC ${total.BTC}, USDT: ${total.USDT}`);
-    console.log(`Total USDT : ${(total.BTC - 1) * btcPrice + total.USDT}. \n `);
+    // console.log(`Balance : BTC ${total.BTC}, USDT: ${total.USDT}`);
+    // console.log(`Total USDT : ${(total.BTC - 1) * btcPrice + total.USDT}. \n `);
     app.io.sockets.emit("server-send-btc", `Balance : BTC ${total.BTC}`);
     app.io.sockets.emit("server-send-usdt", `USDT: ${total.USDT}`);
     app.io.sockets.emit(
@@ -36,6 +36,7 @@ module.exports = function (app, obj, binance, binanceTest) {
     binanceTest
       .createMarketOrder("BTC/USDT", "buy", quantity)
       .then((data) => {
+        writeHand(binanceTest, data)
         console.log(data);
         res.json(data);
       })
@@ -50,6 +51,7 @@ module.exports = function (app, obj, binance, binanceTest) {
     binanceTest
       .createMarketOrder("BTC/USDT", "sell", quantity)
       .then((data) => {
+        writeHand(binanceTest, data)
         console.log(data);
         res.json(data);
       })
@@ -66,11 +68,21 @@ module.exports = function (app, obj, binance, binanceTest) {
     status = 0;
 })
 };
+async function writeHand(binanceTest, data) {
+  const balance = await binanceTest.fetchBalance();
+  const total = balance.total
+  const totalMoney = (total.BTC - 1)*data.price + total.USDT
+  console.log(total.BTC);
+  console.log(total.USDT);
+  console.log(data.price);
+  console.log(totalMoney);
+  writeContract(data, total.BTC, total.USDT, totalMoney);
+}
 async function printBalance(btcPrice,binanceTest) {
     const balance = await binanceTest.fetchBalance();
     const total = balance.total
-    console.log(`Balance : BTC ${total.BTC}, USDT: ${total.USDT}`);
-    console.log(`Total USDT : ${(total.BTC - 1)*btcPrice + total.USDT}. \n `);
+    // console.log(`Balance : BTC ${total.BTC}, USDT: ${total.USDT}`);
+    // console.log(`Total USDT : ${(total.BTC - 1)*btcPrice + total.USDT}. \n `);
     var data ={
         avg: total,
         last: total,
