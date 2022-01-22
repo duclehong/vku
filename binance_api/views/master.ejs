@@ -1,262 +1,240 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <base href="http://localhost:3000/" />
-    <meta charset="UTF-8" />
-    <link rel="stylesheet" href="../public/layout.css" />
-    <link
-      rel="stylesheet"
-      href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/css/bootstrap.min.css"
-      integrity="sha384-zCbKRCUGaJDkqS1kPbPd7TveP5iyJE0EjAuZQTgFLD2ylzuqKfdKlfG/eSrtxUkn"
-      crossorigin="anonymous"
-    />
-    <link rel="stylesheet" href="../public/layout.css">
-    <style>
-      #btnSell,#btnBuy{
-        font-weight: bold;
-        border: #0B0E11;
-      }
-      #on{
-        font-weight: bold;
-        border: #0B0E11;
-        background-color: rgb(248, 209, 47);
-      }
-      #btnBuy:hover{
-    background-color: rgb(47, 248, 64);
-}
-#btnSell:hover{
-  background-color: rgb(248, 47, 47);
-}
-#on:hover{
-  background-color: rgb(47, 248, 171);
+
+<head>
+  <base href="http://localhost:3000/" />
+  <meta charset="UTF-8" />
+  <link rel="stylesheet" href="../public/layout.css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/css/bootstrap.min.css"
+    integrity="sha384-zCbKRCUGaJDkqS1kPbPd7TveP5iyJE0EjAuZQTgFLD2ylzuqKfdKlfG/eSrtxUkn" crossorigin="anonymous" />
+  <link rel="stylesheet" href="../public/layout.css">
+  <style>
+    #btnSell,
+    #btnBuy {
+      font-weight: bold;
+      border: #0B0E11;
     }
-    </style>
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Demo Binance APi</title>
-    <script src="./socket.io/socket.io.js"></script>
-    <!-- <script src="https://cdn.socket.io/4.4.0/socket.io.min.js" integrity="sha384-1fOn6VtTq3PWwfsOrk45LnYcGosJwzMHv+Xh/Jx5303FVOXzEnw0EpLv30mtjmlj" crossorigin="anonymous"></script> -->
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script>
-      var socket = io("http://localhost:3000/");
-      socket.on("server-send-price", function (data) {
-        $("h2").html(data);
-      });
-      socket.on("server-send-btc", function (data) {
-        $("#btc").html(data);
-      });
-      socket.on("server-send-usdt", function (data) {
-        $("#usdt").html(data);
-      });
-      socket.on("server-send-total", function (data) {
-        $("h3").html(data);
-        updateChar(data);
-      });
-      $(document).ready(function () {
-        $("#btnBuy").click(function () {
-          var amount = parseFloat($("#txtAmount").val());
-          $.get("./buy/" + amount, function (data) {
-            console.log(data);
-          });
-        });
-      });
-      $(document).ready(function () {
-        $("#btnSell").click(function () {
-          console.log("hehee");
-          var amount = parseFloat($("#txtAmount").val());
-          $.get("./sell/" + amount, function (data) {
-            console.log(data);
-          });
-        });
-      });
-      $(document).ready(function () {
-        $("#on").click(function () {
-          $.get("./on", function (data) {
-            console.log(data);
-          });
-        });
-      });
-      $(document).ready(function () {
-        $("#of").click(function () {
-          $.get("./off", function (data) {
-            console.log(data);
-          });
-        });
-      });
-    </script>
-  </head>
 
-  <body class="container" style=" background-color: #0B0E11;">
-    <!-- <h2 style="color: aliceblue;">Binance Trading</h2> -->
-    <div class="wrapper">
-      <div class="row mt-5">
-        <div id="left" class="col-8">
-          <!-- TradingView Widget BEGIN -->
-          <div class="tradingview-widget-container">
-            <div id="tradingview_a472b"></div>
-            <div class="tradingview-widget-copyright"></div>
-            <script
-              type="text/javascript"
-              src="https://s3.tradingview.com/tv.js"
-            ></script>
-            <script type="text/javascript">
-              new TradingView.widget({
-                width: 700,
-                height: 350,
-                symbol: "BINANCE:BTCUSDT",
-                interval: "60",
-                timezone: "Asia/Ho_Chi_Minh",
-                theme: "light",
-                style: "1",
-                locale: "en",
-                toolbar_bg: "##FFFFFF",
-                enable_publishing: false,
-                allow_symbol_change: true,
-                container_id: "tradingview_a472b",
-              });
-            </script>
-          </div>
-          <div>
-            <canvas id="myChart"></canvas>
-          </div>
-          <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-          <script>
-            const labels = [
-              "",
-              "",
-              "",
-              "",
-              "",
-              "",
-              "",
-              "",
-              "",
-              "",
-              "",
-              "",
-              "",
-              "",
-              "",
-              "",
-              "",
-              "",
-              "",
-              "",
-              "",
-              "",
-              "",
-              "",
-              "",
-              "",
-              "",
-              "",
-              "",
-              "",
-              "",
-              "",
-              "",
-              "",
-              "",
-              "",
-            ];
-            var oldData = [
-              0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-              0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-              0, 0, 0, 0,
-            ];
-            const data = {
-              labels: labels,
-              datasets: [
-                {
-                  label: "TOTAL USD",
-                  backgroundColor: "rgb(255, 255, 255)",
-                  borderColor: "rgb(248, 209, 47)",
-                  data: oldData,
-                },
-              ],
-            };
+    #on {
+      font-weight: bold;
+      border: #0B0E11;
+      background-color: rgb(248, 209, 47);
+    }
 
-            const config = {
-              type: "line",
-              data: data,
-              options: {},
-            };
+    #btnBuy:hover {
+      background-color: rgb(47, 248, 64);
+    }
+
+    #btnSell:hover {
+      background-color: rgb(248, 47, 47);
+    }
+
+    #on:hover {
+      background-color: rgb(47, 248, 171);
+    }
+  </style>
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Demo Binance APi</title>
+  <script src="./socket.io/socket.io.js"></script>
+  <!-- <script src="https://cdn.socket.io/4.4.0/socket.io.min.js" integrity="sha384-1fOn6VtTq3PWwfsOrk45LnYcGosJwzMHv+Xh/Jx5303FVOXzEnw0EpLv30mtjmlj" crossorigin="anonymous"></script> -->
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script>
+    var socket = io("http://localhost:3000/");
+    socket.on("server-send-price", function (data) {
+      $("h2").html(data);
+    });
+    socket.on("server-send-btc", function (data) {
+      $("#btc").html(data);
+    });
+    socket.on("server-send-usdt", function (data) {
+      $("#usdt").html(data);
+    });
+    socket.on("server-send-total", function (data) {
+      $("h3").html(data);
+      updateChar(data);
+    });
+    $(document).ready(function () {
+      $("#btnBuy").click(function () {
+        var amount = parseFloat($("#txtAmount").val());
+        $.get("./buy/" + amount, function (data) {
+          console.log(data);
+        });
+      });
+    });
+    $(document).ready(function () {
+      $("#btnSell").click(function () {
+        console.log("hehee");
+        var amount = parseFloat($("#txtAmount").val());
+        $.get("./sell/" + amount, function (data) {
+          console.log(data);
+        });
+      });
+    });
+    $(document).ready(function () {
+      $("#on").click(function () {
+        $.get("./on", function (data) {
+          console.log(data);
+        });
+      });
+    });
+    $(document).ready(function () {
+      $("#of").click(function () {
+        $.get("./off", function (data) {
+          console.log(data);
+        });
+      });
+    });
+  </script>
+</head>
+
+<body class="container" style=" background-color: #0B0E11;">
+  <!-- <h2 style="color: aliceblue;">Binance Trading</h2> -->
+  <div class="wrapper">
+    <div class="row mt-5">
+      <div id="left" class="col-8">
+        <!-- TradingView Widget BEGIN -->
+        <div class="tradingview-widget-container">
+          <div id="tradingview_a472b"></div>
+          <div class="tradingview-widget-copyright"></div>
+          <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
+          <script type="text/javascript">
+            new TradingView.widget({
+              width: 700,
+              height: 350,
+              symbol: "BINANCE:BTCUSDT",
+              interval: "60",
+              timezone: "Asia/Ho_Chi_Minh",
+              theme: "light",
+              style: "1",
+              locale: "en",
+              toolbar_bg: "##FFFFFF",
+              enable_publishing: false,
+              allow_symbol_change: true,
+              container_id: "tradingview_a472b",
+            });
           </script>
-          <script>
-            const myChart = new Chart(
-              document.getElementById("myChart"),
-              config
-            );
-
-            function updateChar(data) {
-              oldData.shift();
-              oldData.push(data);
-              myChart.data.datasets[0].data = oldData;
-              myChart.update();
-            }
-          </script>
-
-          <!-- TradingView Widget END -->
         </div>
-        <div id="right" class="col-4 text-center">
-          <h1 class="text-light">BTC/USDT</h1>
-          <h2 style="color: aliceblue" class="mb-5">Binance Trading</h2>
-          <div class="form-group">
-            <input
-              class="form-control"
-              type="number"
-              id="txtAmount"
-              placeholder="Amount of BTC"
-            />
+        <div>
+          <canvas id="myChart"></canvas>
+        </div>
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <script>
+          const labels = [
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+          ];
+          var oldData = [
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0,
+          ];
+          const data = {
+            labels: labels,
+            datasets: [{
+              label: "TOTAL USD",
+              backgroundColor: "rgb(255, 255, 255)",
+              borderColor: "rgb(248, 209, 47)",
+              data: oldData,
+            }, ],
+          };
+
+          const config = {
+            type: "line",
+            data: data,
+            options: {},
+          };
+        </script>
+        <script>
+          const myChart = new Chart(
+            document.getElementById("myChart"),
+            config
+          );
+
+          function updateChar(data) {
+            oldData.shift();
+            oldData.push(data);
+            myChart.data.datasets[0].data = oldData;
+            myChart.update();
+          }
+        </script>
+
+        <!-- TradingView Widget END -->
+      </div>
+      <div id="right" class="col-4 text-center">
+        <h1 class="text-light">BTC/USDT</h1>
+        <h2 style="color: aliceblue" class="mb-5">Binance Trading</h2>
+        <div class="form-group">
+          <input class="form-control" type="number" id="txtAmount" placeholder="Amount of BTC" />
+        </div>
+        <div class="form-row">
+          <div class="form-group col-md-6">
+            <input class="form-control" type="button" id="btnBuy" value="BUY" />
           </div>
-          <div class="form-row">
-            <div class="form-group col-md-6">
-              <input
-                class="form-control"
-                type="button"
-                id="btnBuy"
-                value="BUY"
-              />
-            </div>
-            <div class="form-group col-md-6">
-              <input
-                class="form-control"
-                type="button"
-                id="btnSell"
-                value="SELL"
-              />
-            </div>
+          <div class="form-group col-md-6">
+            <input class="form-control" type="button" id="btnSell" value="SELL" />
           </div>
-          <p id="btc" style="font-size: larger; color: rgb(255, 255, 255)">
-            BTC price
-          </p>
-          <p id="usdt" style="font-size: larger; color: rgb(255, 255, 255)">
-            USDT price
-          </p>
-          <p id="usdt" style="font-size: larger; color: rgb(255, 255, 255)" class="mt-5">
-            TOTAL USD
-          </p>
-          <h3 style="color: aliceblue" >Binance Trading</h3>
-          <input
-          class="form-control"
-          type="button"
-          id="on"
-          value="ON"
-        />
+        </div>
+        <p id="btc" style="font-size: larger; color: rgb(255, 255, 255)">
+          BTC price
+        </p>
+        <p id="usdt" style="font-size: larger; color: rgb(255, 255, 255)">
+          USDT price
+        </p>
+        <p id="usdt" style="font-size: larger; color: rgb(255, 255, 255)" class="mt-5">
+          TOTAL USD
+        </p>
+        <h3 style="color: aliceblue">Binance Trading</h3>
+        <input class="form-control" type="button" id="on" value="ON" />
         <!-- <input
         class="form-control"
         type="button"
         id="off"
         value="OFF"
       /> -->
-        </div>
-        
       </div>
+
     </div>
-  </body>
-  <script>
-    function bot(status) {
-      
-    }
-  </script>
+  </div>
+</body>
+<script>
+  function bot(status) {
+
+  }
+</script>
+
 </html>
